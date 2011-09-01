@@ -39,8 +39,12 @@ module NewRelic::Rack
       response.each {|fragment| (source) ? (source << fragment) : (source = fragment)}
       return nil unless source
       
-      body_start = source.index("<body")
-      body_close = source.rindex("</body>")
+      begin
+        body_start = source.index("<body")
+        body_close = source.rindex("</body>")
+      rescue
+        return nil
+      end
 
       if body_start && body_close
         footer = NewRelic::Agent.browser_timing_footer
